@@ -1,0 +1,14 @@
+INSTALL
+lib/Business/OnlinePayment/Moneris/mpgGlobals.pm
+lib/Business/OnlinePayment/Moneris/mpgResponse.pm
+lib/Business/OnlinePayment/Moneris/mpgHttpsPost.pm
+lib/Business/OnlinePayment/Moneris/mpgCustInfo.pm
+lib/Business/OnlinePayment/Moneris/mpgRecur.pm
+lib/Business/OnlinePayment/Moneris/mpgTransaction.pm
+lib/Business/OnlinePayment/Moneris/Adaptor.pm
+lib/Business/OnlinePayment/Moneris.pm
+Makefile.PL
+README
+t/01_init.t
+misc/Moneris.pm
+MANIFEST
