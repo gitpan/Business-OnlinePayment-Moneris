@@ -10,9 +10,12 @@
 #  Description: A module provided by Moneris Solutions to interface with
 #               the Moneris Solutions 
 #               
-#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris/mpgResponse.pm,v 1.2 2004/09/28 14:43:00 cvs Exp $
+#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris/mpgResponse.pm,v 1.3 2004/10/10 15:49:10 cvs Exp $
 #
 #  $Log: mpgResponse.pm,v $
+#  Revision 1.3  2004/10/10 15:49:10  cvs
+#  Clean up and add documentation
+#
 #  Revision 1.2  2004/09/28 14:43:00  cvs
 #  Integrating with Interchange
 #
@@ -25,8 +28,8 @@ use strict;
 
 use vars qw($VERSION);
 
-'$Revision: 1.2 $' =~ /([0-9]{1,}\.[0-9]{1,})/;
-$VERSION = $1;
+( $VERSION ) = '$Revision: 1.3 $ ' =~ /\$Revision:\s+([^\s]+)/;
+
 ################# mpgResponse #################################################
 
 

@@ -1,10 +1,13 @@
+*****************************************************************************
+* Copyright (c) 2004 Down Home Web Design, Inc. All rights reserved. This   *
+* program is free software; you can redistribute it and/or modify it under  *
+*  the sameterms as Perl itself.                                            *
+*****************************************************************************
 
-After spending hours trying to fullfill all the prerequisites for XML modules,
-to build this UPS module, I relized there's a deffinate need for a simple XML
-solution without a load of prerequisites.  I designed this module to be 100%
-self sufficient.  No additional modules are needed.
+This module allows the user to interface with the Moneris Online payment 
+service (www.moneris.com) in any Perl program using the Business::Online::Payment
+structure.  
 
-Using this module requires an UPS account.  You can get an account at 
-www.ups.com/
+The module includes extra code to make Moneris work with the  Interchange 
+ecommerce software available at www.icdevgroup.org.
 
-See INSTALL.interchange to install the Interchange user tag.

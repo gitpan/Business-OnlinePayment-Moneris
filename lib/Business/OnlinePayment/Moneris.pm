@@ -1,21 +1,27 @@
 #!/usr/bin/perl
 ################################################################################
 #
-#  Script Name : Moneris.pm
-#  Version     : 1
+#  Script Name : $RCSFile$
+#  Version     : $Revision: 0.5 $
 #  Company     : Down Home Web Design, Inc
 #  Author      : Duane Hinkley ( duane@dhwd.com )
 #  Website     : www.DownHomeWebDesign.com
 #
-#  Description: A custom self contained module to calculate UPS rates using the
-#               newer XML method.  This module properly calulates rates between
-#               and within other non-US countries including Canada.
-#               
-#  Copyright (c) 2003-2004 Down Home Web Design, Inc.  All rights reserved.
+#  Description: This module allows the user to interface with the Moneris Online
+#               payment service (www.moneris.com) in any Perl program using the 
+#               Business::Online::Payment structure.  
 #
-#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris.pm,v 0.4 2004/09/29 02:47:52 cvs Exp $
+#               The module includes extra code to make Moneris work with the  
+#               Interchange ecommerce software available at www.icdevgroup.org.
+#               
+#  Copyright (c) 2004 Down Home Web Design, Inc.  All rights reserved.
+#
+#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris.pm,v 0.5 2004/10/10 15:49:10 cvs Exp $
 #
 #  $Log: Moneris.pm,v $
+#  Revision 0.5  2004/10/10 15:49:10  cvs
+#  Clean up and add documentation
+#
 #  Revision 0.4  2004/09/29 02:47:52  cvs
 #  Added customer info and OnlinePayment version
 #
@@ -28,6 +34,71 @@
 #
 #
 ################################################################################
+
+=pod
+
+=head1 NAME $RCSFile$ 
+
+Business::OnlinePayment::Moneris - Moneris Online Payment  
+
+=head1 SYNOPSIS
+
+use Business::OnlinePayment;
+
+$tx = new Business::OnlinePayment("Moneris");
+
+$tx->content(
+
+    login          => 'store1',
+    password       => 'yesguy',
+    order_number   => '999999999',
+
+    action         => 'Normal Authorization',
+    description    => 'Business::OnlinePayment visa test',
+    amount         => '1.01',
+    first_name     => 'Joe',
+    last_name      => 'Smith',
+    email          => 'Joe@work.com',
+    address        => '1 Foobar St',
+    city           => 'Marina Del Rey',
+    state          => 'CA',
+    country        => 'US',
+    zip            => '9999',
+    card_number    => '4242424242424242',
+    expiration     => '06/04',
+);
+
+$tx->test_transaction(1); 
+$tx->submit();
+
+
+=head1 DESCRIPTION 
+
+This module allows the user to interface with the Moneris Online payment 
+service (www.moneris.com) in any Perl program using the Business::Online::Payment
+structure.  
+
+The module includes extra code to make Moneris work with the  Interchange 
+ecommerce software available at www.icdevgroup.org.
+
+=head1 METHODS
+
+The methods described in this section are available for all C<FedEx::XML> objects.
+
+
+=over
+
+=item new
+
+Standard Online Payment new constructor.  
+
+$tx = new Business::OnlinePayment("Moneris");
+
+=cut
+
+
+###############################################################################
+#
 
 package Business::OnlinePayment::Moneris;
 
@@ -45,9 +116,14 @@ require Exporter;
 @EXPORT = qw();
 @EXPORT_OK = qw();
 
-'$Revision: 0.4 $' =~ /([0-9]{1,}\.[0-9]{1,})/;
-$VERSION = $1;
+( $VERSION ) = '$Revision: 0.5 $ ' =~ /\$Revision:\s+([^\s]+)/;
 
+
+=item $tx->submit()
+
+This method will submit the payment to Moneris.
+
+=cut
 
 sub submit {
 
@@ -155,79 +231,93 @@ sub submit {
 	}
 
 }
+#########################################################################################33
 # End of class
 
 1;
 __END__
 
-=head1 NAME
+=item content
 
-Business::OnlinePayment::Moneris - Online Payment Module Moneris
-} 
+Accessor to set the values sent to Moneris.  
 
-=head1 SYNOPSIS
+$tx->content(
 
-    use Business::OnlinePayment::Moneris;
+    login          => 'store1',
+    password       => 'yesguy',
+    order_number   => '01234567890',
+
+    action         => 'Normal Authorization',
+    description    => 'Business::OnlinePayment visa test',
+    amount         => '1.01',
+    invoice_number => '',
+    customer_id    => '',
+    first_name     => 'Jason',
+    last_name      => 'Burns',
+    email          => 'test@dhdmedia.com',
+    address        => '1 Foobar St',
+    city           => 'Marina Del Rey',
+    state          => 'CA',
+    country        => 'US',
+    zip            => '90292',
+    card_number    => '4242424242424242',
+    expiration     => '06/04',
+);
 
 
+=item test_transaction
+
+Accessor to tell Moneris this will be a test transation.  
+
+$tx->test_transaction(1)
 
 
-=head1 DESCRIPTION
+=item is_success
 
-none
+Accessor returns true if the payment was successful  
 
-=head1 REQUIREMENTS
+$tx->is_success()
 
-none
 
-=head1 COMMON METHODS
+=item result_code
 
-The methods described in this section are available for all 
-C<Business::OnlinePayment::MonerisL> objects.
+Accessor to return the result code from Moneris.  Any result code lower than
+50 is good.
 
-=over 4
+$tx->result_code()
 
-=item new($userid,$userid_pass,$access_key,$origin_country)
 
-none
+=item authorization
 
-=back
+Accessor to return the authorization code from Moneris.  
 
-=head1 ERRORS/BUGS
+$tx->authorization()
 
-=over 4
-
-=item none
-
-none
-
-=back
-
-=head1 IDEAS/TODO
-
-none
 
 =head1 AUTHOR
 
-Duane Hinkley, <F<jpowers@cpan.org>>
+Duane Hinkley, <F<duane@dhwd.com>>
 
 L<http://www.dhwd.com>
-
-Copyright (c) 2004 Down Home Web Design, Inc.
-
-All rights reserved.
-
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself
 
 If you have any questions, comments or suggestions please feel free 
 to contact me.
 
-=head1 SEE ALSO
+=head1 COPYRIGHT
 
-none
+Copyright 2004, Down Home Web Design, Inc.
+All rights reserved.
 
-=cut
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=head1 AVAILABILITY
+
+The latest version of this module is likely to be available from CPAN
+as well as:
+
+http://www.dhwd.com/
+
 
 1;
 

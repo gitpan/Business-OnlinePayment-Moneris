@@ -1,0 +1,36 @@
+
+Step by step
+
+   - Copy misc/Moneris.pm  to the interchange/lib/Vend/Payment/ directory (ex. /usr/lib/interchange/lib/Vend/Payment/)
+
+   - Add "Require module Vend::Payment::Moneris" to interchange.cfg 
+
+   - Add the following to catalog.cfg
+
+	Route  moneris       id           "__MV_PAYMENT_ID__"
+	Route  moneris       secret       "__MV_PAYMENT_SECRET__"
+	Route  moneris       test	  "__MV_PAYMENT_TEST__"
+	Route  moneris       transaction  '__MV_PAYMENT_TRANS__'
+
+
+   - Set the following to variable.txt and delete variable.gdbm
+
+	MV_PAYMENT_ID   store1     Payment
+	MV_PAYMENT_SECRET       yesguy  Payment
+	MV_PAYMENT_TEST true    Payment
+	MV_PAYMENT_MODE moneris    Payment
+
+
+	MV_PAYMENT_TRANS	authorize	Payment (for preauthorization only)
+	SETTLE_TRANSACTION	1	Payment
+
+
+	MV_PAYMENT_TRANS	sale	Payment (To completely process)
+	SETTLE_TRANSACTION		Payment
+
+
+   - Restart Interchange
+
+
+
+[charge gateway=moneris id=store1 secret=yesguy transaction=authorize test=true amount=1.01 mv_credit_card_number=4242424242424242 ]

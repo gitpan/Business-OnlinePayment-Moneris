@@ -13,9 +13,12 @@
 #               
 #  Copyright (c) 2003-2004 Down Home Web Design, Inc.  All rights reserved.
 #
-#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris/Adaptor.pm,v 0.4 2004/09/29 02:47:52 cvs Exp $
+#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris/Adaptor.pm,v 0.5 2004/10/10 15:49:10 cvs Exp $
 #
 #  $Log: Adaptor.pm,v $
+#  Revision 0.5  2004/10/10 15:49:10  cvs
+#  Clean up and add documentation
+#
 #  Revision 0.4  2004/09/29 02:47:52  cvs
 #  Added customer info and OnlinePayment version
 #
@@ -29,6 +32,51 @@
 #
 ################################################################################
 
+=pod
+
+=head1 NAME $RCSFile$ 
+
+Business::OnlinePayment::Moneris::Adaptor - Moneris Online Payment Adaptor 
+
+=head1 SYNOPSIS
+
+use Business::OnlinePayment::Moneris::Adaptor;
+
+$mpg = new Business::OnlinePayment::Moneris::Adaptor($storeid,$apitoken,'true');
+
+$mpg->Purchase(
+					{
+						order_id	=> '2345678',  
+						cust_id		=> 'bjones',  
+						amount		=> '1.01',  
+						cc_num		=> '4242424242424242',  
+						cc_exp		=> '0303',  
+					}
+			);
+
+if ( $mpg->getResponseCode() ne 'null' && $mpg->getResponseCode() < 50 ) {
+	
+	print "Success";
+}
+else {
+	
+	print "Error: " . $mpg->getMessage();
+}
+
+=head1 DESCRIPTION 
+
+This module is an adaptor between the Business::OnlinePayment module and the 
+modules provided by Moneris.  This adaptor is also used to interface with 
+Interchange (www.icdevgroup.org)
+
+=head1 METHODS
+
+The methods described in this section are available for all 
+C<Business::OnlinePayment::Moneris::Adaptor> objects.
+
+=cut
+
+
 package Business::OnlinePayment::Moneris::Adaptor;
 
 use Business::OnlinePayment::Moneris::mpgTransaction;
@@ -38,9 +86,19 @@ use Business::OnlinePayment::Moneris::mpgCustInfo;
 use strict;
 use vars qw($VERSION);
 
-'$Revision: 0.4 $' =~ /([0-9]{1,}\.[0-9]{1,})/;
-$VERSION = $1;
+( $VERSION ) = '$Revision: 0.5 $ ' =~ /\$Revision:\s+([^\s]+)/;
 
+
+=over
+
+=item new(%hash)
+
+The new method is the constructor.  It uses the store id and api token provide
+by Moneris
+
+$mpg = new Business::OnlinePayment::Moneris::Adaptor($storeid,$apitoken,'true');
+
+=cut
 
 
 sub new {
@@ -55,6 +113,21 @@ sub new {
 
    bless $self, $type;
 }
+
+=item $t->Purchase(%hash)
+
+This method accepts the following hash and processes a purchase transaction
+
+			%hash =	{
+						order_id	=> $auth_order_id,  
+						cust_id		=> 'bjones',  
+						amount		=> '1.01',  
+						cc_num		=> '4242424242424242',  
+						cc_exp		=> '0303',  
+					}
+
+=cut
+
 sub Purchase {
 
    my $self  = shift;
@@ -75,6 +148,21 @@ sub Purchase {
 	$self->process_transaction(\%txnArray);
 
 }
+=item $t->PreAuth(%hash)
+
+This method accepts the following hash and processes a pre-authorization
+transaction
+
+			%hash =	{
+						order_id	=> $auth_order_id,  
+						cust_id		=> 'bjones',  
+						amount		=> '1.01',  
+						cc_num		=> '4242424242424242',  
+						cc_exp		=> '0303',  
+					}
+
+=cut
+
 sub PreAuth {
 
    my $self  = shift;
@@ -96,8 +184,20 @@ sub PreAuth {
 
 
 }
-# Capture
-#
+
+=item $t->Completion(%hash)
+
+This method accepts the following hash and processes a completion (capture)
+transaction
+
+			%hash =	{
+						txn_number	=> $TxnNumber,  
+						order_id	=> $auth_order_id,  
+						amount		=> '1.01',  
+					}
+
+=cut
+
 sub Completion {
 
    my $self  = shift;
@@ -118,6 +218,21 @@ sub Completion {
 }
 # This is a refund not a cancel to a preauthorization
 #
+
+=item $t->Refund(%hash)
+
+This method accepts the following hash and processes a refund to to a customer
+for previously completed purchase.  This is not a cancel to a previous 
+preathorization.
+
+			%hash =	{
+						txn_number	=> $TxnNumber,  
+						order_id	=> $auth_order_id,  
+						amount		=> '1.01',  
+					}
+
+=cut
+
 sub Refund {
 
    my $self  = shift;
@@ -137,6 +252,19 @@ sub Refund {
 
 }
 
+=item $t->Void(%hash)
+
+This method accepts the following hash and voids a previously completed 
+purchase. 
+
+			%hash =	{
+						txn_number	=> $TxnNumber,  
+						order_id	=> $auth_order_id,  
+						amount		=> '1.01',  
+					}
+
+=cut
+
 sub Void {
 
    my $self  = shift;
@@ -154,6 +282,20 @@ sub Void {
 	$self->process_transaction(\%txnArray);
 
 }
+
+=item $t->VoidPreAuth(%hash)
+
+This method accepts the following hash and voids a previously authorized 
+purchase. 
+
+			%hash =	{
+						txn_number	=> $TxnNumber,  
+						order_id	=> $auth_order_id,  
+						amount		=> '1.01',  
+					}
+
+=cut
+
 sub VoidPreAuth {
 
    my $self  = shift;
@@ -244,12 +386,22 @@ sub process_transaction {
 	# print("\nTimedOut = " . $self->getTimedOut());
 
 }
+
+=item $t->getTerminalIDs()
+
+=cut
+
 sub getTerminalIDs(){
 
  my $self = shift; 
  return (keys(%{$self->{mpgResponse}->{termIDHash}}) );
  
 }
+
+
+=item $t->getCreditCards()
+
+=cut
 
 
 sub getCreditCards($ecr_no){
@@ -260,7 +412,9 @@ sub getCreditCards($ecr_no){
 }
 
 
+=item $t->getCardType()
 
+=cut
 
 sub getCardType(){
 
@@ -269,12 +423,22 @@ sub getCardType(){
 
 }
 
+=item $t->getTransAmount()
+
+=cut
+
+
 sub getTransAmount(){
 
  my $self = shift;  
  return ($self->{mpgResponse}->{responseData}->{'TransAmount'});
 
 }
+
+=item $t->getTxnNumber()
+
+=cut
+
 
 sub getTxnNumber(){
 
@@ -283,12 +447,22 @@ sub getTxnNumber(){
 
 }
 
+=item $t->getReceiptId()
+
+=cut
+
+
 sub getReceiptId(){
 
  my $self = shift; 
  return ($self->{mpgResponse}->{responseData}->{'ReceiptId'});
 
 }
+
+=item $t->getTransType()
+
+=cut
+
 
 sub getTransType(){
  
@@ -297,12 +471,22 @@ sub getTransType(){
 
 }
 
+=item $t->getReferenceNum()
+
+=cut
+
+
 sub getReferenceNum(){
  
  my $self = shift; 
  return ($self->{mpgResponse}->{responseData}->{'ReferenceNum'});
 
 }
+
+=item $t->getResponseCode()
+
+=cut
+
 
 sub getResponseCode(){
  
@@ -311,12 +495,22 @@ sub getResponseCode(){
 
 }
 
+=item $t->getISO()
+
+=cut
+
+
 sub getISO(){
  
  my $self = shift; 
  return ($self->{mpgResponse}->{responseData}->{'ISO'});
 
 }
+
+=item $t->getBankTotals()
+
+=cut
+
 
 sub getBankTotals(){
  
@@ -325,12 +519,22 @@ sub getBankTotals(){
 
 }
 
+=item $t->getMessage()
+
+=cut
+
+
 sub getMessage(){
  
  my $self = shift; 
  return ($self->{mpgResponse}->{responseData}->{'Message'});
 
 }
+
+=item $t->getAuthCode()
+
+=cut
+
 
 sub getAuthCode(){
  
@@ -339,12 +543,22 @@ sub getAuthCode(){
 
 }
 
+=item $t->getComplete()
+
+=cut
+
+
 sub getComplete(){
  
  my $self = shift; 
  return ($self->{mpgResponse}->{responseData}->{'Complete'});
 
 }
+
+=item $t->getTransDate()
+
+=cut
+
 
 sub getTransDate(){
  
@@ -353,12 +567,22 @@ sub getTransDate(){
 
 }
 
+=item $t->getTransTime()
+
+=cut
+
+
 sub getTransTime(){
  
  my $self = shift; 
  return ($self->{mpgResponse}->{responseData}->{'TransTime'});
 
 }
+
+=item $t->getTicket()
+
+=cut
+
 
 sub getTicket(){
  
@@ -367,12 +591,22 @@ sub getTicket(){
 
 }
 
+=item $t->getTimedOut()
+
+=cut
+
+
 sub getTimedOut(){
 
  my $self = shift; 
  return ($self->{mpgResponse}->{responseData}->{'TimedOut'});
 
 }
+
+
+=item $t->getRecurSuccess()
+
+=cut
 
 
 sub getRecurSuccess(){
@@ -388,74 +622,32 @@ sub getRecurSuccess(){
 1;
 __END__
 
-=head1 NAME
 
-Business::OnlinePayment::Moneris - Online Payment Module Moneris
-} 
-
-=head1 SYNOPSIS
-
-    use Business::OnlinePayment::Moneris;
-
-
-
-
-=head1 DESCRIPTION
-
-none
-
-=head1 REQUIREMENTS
-
-none
-
-=head1 COMMON METHODS
-
-The methods described in this section are available for all 
-C<Business::OnlinePayment::MonerisL> objects.
-
-=over 4
-
-=item new($userid,$userid_pass,$access_key,$origin_country)
-
-none
-
-=back
-
-=head1 ERRORS/BUGS
-
-=over 4
-
-=item none
-
-none
-
-=back
-
-=head1 IDEAS/TODO
-
-none
 
 =head1 AUTHOR
 
-Duane Hinkley, <F<jpowers@cpan.org>>
+Duane Hinkley, <F<duane@dhwd.com>>
 
 L<http://www.dhwd.com>
-
-Copyright (c) 2004 Down Home Web Design, Inc.
-
-All rights reserved.
-
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself
 
 If you have any questions, comments or suggestions please feel free 
 to contact me.
 
-=head1 SEE ALSO
+=head1 COPYRIGHT
 
-none
+Copyright 2004, Down Home Web Design, Inc.
+All rights reserved.
 
-=cut
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=head1 AVAILABILITY
+
+The latest version of this module is likely to be available from CPAN
+as well as:
+
+http://www.dhwd.com/
+
 
 1;
 

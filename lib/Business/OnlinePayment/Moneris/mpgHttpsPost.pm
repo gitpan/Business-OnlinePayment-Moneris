@@ -10,9 +10,12 @@
 #  Description: A module provided by Moneris Solutions to interface with
 #               the Moneris Solutions 
 #               
-#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris/mpgHttpsPost.pm,v 1.4 2004/09/29 02:47:52 cvs Exp $
+#  $Header: /home/cvs/moneris_payment/lib/Business/OnlinePayment/Moneris/mpgHttpsPost.pm,v 1.5 2004/10/10 15:49:10 cvs Exp $
 #
 #  $Log: mpgHttpsPost.pm,v $
+#  Revision 1.5  2004/10/10 15:49:10  cvs
+#  Clean up and add documentation
+#
 #  Revision 1.4  2004/09/29 02:47:52  cvs
 #  Added customer info and OnlinePayment version
 #
@@ -31,8 +34,7 @@ use strict;
 
 use vars qw($VERSION);
 
-'$Revision: 1.4 $' =~ /([0-9]{1,}\.[0-9]{1,})/;
-$VERSION = $1;
+( $VERSION ) = '$Revision: 1.5 $ ' =~ /\$Revision:\s+([^\s]+)/;
 
 
 ###################  mpgHttpsPost ############################################

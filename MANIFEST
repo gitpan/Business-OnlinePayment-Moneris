@@ -10,5 +10,8 @@ lib/Business/OnlinePayment/Moneris.pm
 Makefile.PL
 README
 t/01_init.t
+t/02_online_payment.t
 misc/Moneris.pm
 MANIFEST
+INSTALL.interchange
+Makefile.old
